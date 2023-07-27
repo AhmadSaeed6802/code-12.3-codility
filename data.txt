@@ -1,0 +1,120 @@
+Global.asax.cs
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+using System.Web.Security;
+using System.Web.SessionState;
+using System.Web.Http;
+
+namespace AspNetFirstWebAPI
+{
+    public class Global : HttpApplication
+    {         // when applictiin start run this Application_Start get called
+        void Application_Start(object sender, EventArgs e) // at run or starts this is the 1st method call  , all routes registers here
+        {                                       // appliction routes register here----------- 
+            // Code that runs on application startup         
+            //  IMP---->Register routes and make  application able to know that where it have to go, in which which API's controller and in which controller 
+            AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);//WEB API routes here ,     by calling this  method lies in Application start MATHOD ---App start folder in Solution Explorer
+            RouteConfig.RegisterRoutes(RouteTable.Routes);       // MVC related routes HERE,  by calling this  method lies in Application start MATHOD----App start folder in Solution Explorer
+        }
+    }                
+                        // WEB API only returns data only ,not return any view or  UI view(user interface view etc.)
+                        // but MVC API  return  both data and view etc. 
+
+WebApiConfig.cs
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+
+namespace AspNetFirstWebAPI
+{
+    public static class WebApiConfig
+    {
+        public static void Register(HttpConfiguration config)
+        {
+            // Web API configuration and services
+
+            // Web API routes
+            config.MapHttpAttributeRoutes();
+
+            config.Routes.MapHttpRoute(     // config routes of web api  
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}", // WEB API ROUTE , No Action method but Mvc API have a Action 
+                defaults: new { id = RouteParameter.Optional } //ID OPTIONAL
+            );
+        }
+    }
+}
+
+}
+
+--------------------------
+RouteConfig.cs
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace AspNetFirstWebAPI
+{
+    public class RouteConfig
+    {
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            routes.MapRoute(
+                name: "Default",
+                url: "{controller}/{action}/{id}",  // Mvc appliction route  ,  Mvc API have a Action but WEB API  No Action method 
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional } //id optional
+            );
+        }
+    }
+}
+----------------------------------------
+
+EmployeesDataController.cs*
+
+
+ using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace AspNetFirstWebAPI.Controllers
+{
+                       
+    public class EmployeesDataController : ApiController  // WEB API only returns data only ,not return ani UI view(user interface view etc.)
+    {     //BY default No Action Method as it is not part of web api controler
+          //but in MVC have an action method 
+          //  First time application run no Action method call in web API 
+          //  First time application run--- By default GET REQUEST works,
+          //  so if you have to specify that This Method should work on  GET REQUEST, so put  [HttpGet] before this method
+        public string[] myEmployees = { "Adil", "Bilal", "Zain" }; // creat a string 
+        [HttpGet]
+        public string[] GetEmployees()    // When this action method run 
+        {
+            return myEmployees;             // we will be returned with the data of this array , ( remind no view will be returned only datain WEB API
+        }                               // data returned will be in a Formate that may be  TXT,XML(eXtensible Markup Language),JSON(JavaScript Object Notation (JSON) is a standard text-based Format for representing structured data based on JavaScript object syntax.)
+    }                             //BY default ASP.NET appliction return data in XML formate ,so thre data we get on broswer will be in XML format
+}
+         // summary WEB API returns only Data that will be in JSON or XML, XML here.  
+
+
+
