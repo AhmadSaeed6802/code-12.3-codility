@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+
+public class Solution
+{
+    public int CountDifferentLetters(string letters)
+    {
+        // Create two dictionaries for lowercase and uppercase letters
+        Dictionary<char, int> uppercaseDict = new Dictionary<char, int>();
+        Dictionary<char, int> lowercaseDict = new Dictionary<char, int>();
+        for (int i = 0; i < letters.Length; i++)
+        {
+            char c = letters[i];
+            char test = char.ToLower(c);
+            if (char.IsUpper(c) && !uppercaseDict.ContainsKey(test))
+            {
+                char a = char.ToLower(c);
+                uppercaseDict[a] = i;
+            }
+        }
+        for (int i = 0; i < letters.Length; i++)
+        {
+            char c = letters[i];
+            if(char.IsLower(c) && uppercaseDict.ContainsKey(c))
+            {
+                if(uppercaseDict[c] > i)
+                {
+                    if(lowercaseDict.ContainsKey(c))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        lowercaseDict[c] = 1;
+                    }
+                }
+                else
+                {
+                    lowercaseDict[c] = 0;
+                }
+            }
+        }
+        int count = 0;
+        foreach (var value in lowercaseDict.Values)
+        {
+            count += value;
+        }
+        return count;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Solution solution = new Solution();
+        // Test cases
+        Console.WriteLine(solution.CountDifferentLetters("aaAbcCABBc")); // Expected output: 2
+        Console.WriteLine(solution.CountDifferentLetters("xyzXYZabcABC")); // Expected output: 6
+        Console.WriteLine(solution.CountDifferentLetters("ssSSSDdcC")); // Expected output: 2
+        Console.ReadKey();
+    }
+}
